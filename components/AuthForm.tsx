@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { getLoggedInUser, signUp } from "../lib/actions/user.actions";
 import { signIn } from "../lib/actions/user.actions";
+import PlaidLink from "../components/PlaidLink";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,8 +42,21 @@ const AuthForm = ({ type }: { type: string }) => {
     setIsLoading(true);
     try {
       // sign up with Appwrite and create plaid
+
       if (type === "sign-up") {
-        const newUser = await signUp(data);
+        const userData = {
+          firstName: data.firstName!,
+          lastName: data.lastName!,
+          address1: data.address1!,
+          city: data.city!,
+          state: data.state!,
+          postalCode: data.postalCode!,
+          dateOfBirth: data.dateOfBirth!,
+          ssn: data.ssn!,
+          email: data.email,
+          password: data.password
+        };
+        const newUser = await signUp(userData);
         setUser(newUser);
       }
       if (type === "sign-in") {
@@ -85,9 +99,11 @@ const AuthForm = ({ type }: { type: string }) => {
         </div>
       </header>
       {user ? (
-        <div className="flex flex-col gap-4">{/* {PlaidLink} */}</div>
+        <div className="flex flex-col gap-4">
+          {/* {PlaidLink} */}
+          <PlaidLink user={user} variant="primary" />
+        </div>
       ) : (
-        //  FORM
         <>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
